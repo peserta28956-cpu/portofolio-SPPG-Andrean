@@ -81,6 +81,68 @@
       transform: translateY(-3px);
       box-shadow: 0 16px 36px -10px rgba(99, 102, 241, 0.25);
     }
+
+    /* =========================================
+       SUCCESSION / STAGGERED ENTRANCE ANIMATION
+       ========================================= */
+    @keyframes successionFadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(32px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes successionContainerIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* Container Entrance Animation (Dibuat Lebih Lambat & Halus) */
+    .page-view.active,
+    .subtab-content-ppg.active {
+      animation: successionContainerIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    /* Succession / Stagger Effect on Direct Children (Durasi diperpanjang menjadi 0.85s) */
+    .page-view.active > *,
+    .subtab-content-ppg.active > * {
+      animation: successionFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    /* Staggered Delay for Page Children (Jeda bertingkat diperlebar agar suksesi terlihat jelas) */
+    .page-view.active > *:nth-child(1),
+    .subtab-content-ppg.active > *:nth-child(1) { animation-delay: 0.08s; }
+    .page-view.active > *:nth-child(2),
+    .subtab-content-ppg.active > *:nth-child(2) { animation-delay: 0.20s; }
+    .page-view.active > *:nth-child(3),
+    .subtab-content-ppg.active > *:nth-child(3) { animation-delay: 0.32s; }
+    .page-view.active > *:nth-child(4),
+    .subtab-content-ppg.active > *:nth-child(4) { animation-delay: 0.44s; }
+    .page-view.active > *:nth-child(5),
+    .subtab-content-ppg.active > *:nth-child(5) { animation-delay: 0.56s; }
+    .page-view.active > *:nth-child(6),
+    .subtab-content-ppg.active > *:nth-child(6) { animation-delay: 0.68s; }
+    .page-view.active > *:nth-child(7),
+    .subtab-content-ppg.active > *:nth-child(7) { animation-delay: 0.80s; }
+
+    /* Staggered Delay inside Grids (Cards, Mata Kuliah, Keahlian) */
+    .page-view.active .grid > * {
+      animation: successionFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .page-view.active .grid > *:nth-child(1) { animation-delay: 0.12s; }
+    .page-view.active .grid > *:nth-child(2) { animation-delay: 0.24s; }
+    .page-view.active .grid > *:nth-child(3) { animation-delay: 0.36s; }
+    .page-view.active .grid > *:nth-child(4) { animation-delay: 0.48s; }
+    .page-view.active .grid > *:nth-child(5) { animation-delay: 0.60s; }
+    .page-view.active .grid > *:nth-child(6) { animation-delay: 0.72s; }
   </style>
 </head>
 <body class="bg-academic-canvas text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white relative">
@@ -1878,17 +1940,17 @@
         setTimeout(() => { pBar.style.opacity = '0'; pBar.style.width = '0%'; }, 450);
       }
 
-      // Sembunyikan semua halaman dan lepas class active
+      // Sembunyikan semua halaman lama dan hapus class active
       document.querySelectorAll('.page-view').forEach(v => {
         v.classList.add('hidden');
         v.classList.remove('active');
       });
 
-      // Tampilkan halaman target dan picu reflow agar urutan animasi succession selalu diputar ulang dari awal
+      // Munculkan kontainer baru dengan reset reflow agar urutan animasi succession selalu terpicu dari awal
       const targetView = document.getElementById(viewId);
       if (targetView) {
         targetView.classList.remove('hidden');
-        void targetView.offsetWidth; // Force Reflow
+        void targetView.offsetWidth; // Trigger reflow browser
         targetView.classList.add('active');
       }
 
@@ -2092,7 +2154,7 @@
       const target = document.getElementById(subId);
       if (target) {
         target.classList.remove('hidden');
-        void target.offsetWidth; // Trigger Reflow
+        void target.offsetWidth;
         target.classList.add('active');
       }
 
